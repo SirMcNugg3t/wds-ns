@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Build Drivers:
+  build:
+    name: Build driver samples
     runs-on: windows-2022
 
     env:
