@@ -66,15 +66,30 @@ jobs:
               exit $LASTEXITCODE
           }
 
-      - name: Setup Pre-Requisites
-        run: echo Hello, world!
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Extract Driver Binaries
+        shell: pwsh
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          $Dest = "$env:DEST\x64"
+          if (!(Test-Path $Dest)) { New-Item -ItemType Directory -Path $Dest -Force }
+
+          Write-Host "[+] Searching for x64 Release binaries in $env:WDS_PATH..."
+
+          # Find directories named 'x64' that are within a 'Release' path
+          Get-ChildItem -Path "$env:WDS_PATH" -Recurse -Directory |
+            Where-Object { $_.Name -eq "x64" -and $_.FullName -like "*Release*" } |
+            ForEach-Object {
+                $src = $_.FullName
+                Write-Host "  -> Extracting from: $src"
+
+                # Copy driver package files (sys, inf, cat, pdb)
+                Get-ChildItem -Path $src -Include *.sys, *.inf, *.cat, *.pdb -File | ForEach-Object {
+                    Copy-Item -Path $_.FullName -Destination $Dest -Force -ErrorAction SilentlyContinue
+                }
+            }
+
+      - name: Upload Driver Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-drivers-binaries
+          path: ${{ env.DEST }}
+          if-no-files-found: warn
