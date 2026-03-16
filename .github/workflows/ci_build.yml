@@ -10,7 +10,7 @@ jobs:
 
     env:
       WDS_PATH: "${{ github.workspace }}\\windows-driver-samples"
-      CODEQL_BIN: "${{ github.workspace }}\\codeql\codeql.exe"
+      CODEQL_BIN: "${{ github.workspace }}\\codeql\\codeql.exe"
       X64_DB_PATH: "${{ github.workspace }}\\wds-release-x64"
       ARM64_DB_PATH: "${{ github.workspace }}\\wds-release-x64"
       DEST: "${{ github.workspace }}\\extracted_drivers"
