@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    name: Build driver samples
+    name: Build Driver Samples
     runs-on: windows-2022
 
     env:
@@ -59,7 +59,7 @@ jobs:
           # Use & (call operator) with $env: variables
           & $env:CODEQL_BIN database create "$env:X64_DB_PATH" `
               --language=cpp `
-              --command "pwsh -NoProfile -ExecutionPolicy Bypass -File `"$env:WDS_PATH\Build-AllSamples.ps1`" -Configuration Release -Platform x64 -Verbose"
+              --command "pwsh -NoProfile -ExecutionPolicy Bypass -Command `"cd '$env:WDS_PATH'; ./Build-AllSamples.ps1 -Configuration Release -Platform x64 -Verbose`""
 
           if ($LASTEXITCODE -ne 0) {
               Write-Error "[!] Database creation failed with error $LASTEXITCODE"
