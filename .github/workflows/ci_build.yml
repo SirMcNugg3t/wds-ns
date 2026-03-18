@@ -23,6 +23,21 @@ jobs:
           path: ${{ env.WDS_PATH }}
           submodules: recursive
 
+      - name: Clean cloned repo (remove folders b-l)
+        shell: pwsh
+        run: |
+          Write-Host "[+] Cleaning cloned repo: removing directories starting with b-l..."
+          $root = $env:WDS_PATH
+          Get-ChildItem -Path $root -Directory -Force |
+            Where-Object { $_.Name -match '^[b-lB-L]' } |
+            ForEach-Object {
+              Write-Host "  -> Removing: $($_.FullName)"
+              Remove-Item -Path $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+            }
+
+          Write-Host "[+] Remaining top-level directories:"
+          Get-ChildItem -Path $root -Directory -Force | ForEach-Object { Write-Host "  - $($_.Name)" }
+
       - name: Download and Extract CodeQL CLI
         shell: pwsh
         run: |
