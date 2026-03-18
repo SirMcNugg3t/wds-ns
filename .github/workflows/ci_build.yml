@@ -1,4 +1,4 @@
-name: Build WDS
+name: Build WDS 1
 
 on:
   workflow_dispatch:
